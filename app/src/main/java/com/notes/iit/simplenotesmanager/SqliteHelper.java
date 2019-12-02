@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by amardeep on 10/26/2017.
  */
@@ -41,7 +43,15 @@ public class SqliteHelper extends SQLiteOpenHelper {
             + KEY_EMAIL + " TEXT, "
             + KEY_PASSWORD + " TEXT"
             + " ) ";
-
+    private static final String TABLE_NOTES ="note" ;
+    private static final String KEY_DESCRIPTION ="description" ;
+    private static final String KEY_MODIFIEDDATE ="date" ;
+    public static final String SQL_TABLE_NOTES = " CREATE TABLE " + TABLE_NOTES
+            + " ( "
+            + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + KEY_DESCRIPTION + " TEXT, "
+            + KEY_MODIFIEDDATE + " STRING"
+            + " ) ";
 
     public SqliteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +60,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_TABLE_USERS);
+        sqLiteDatabase.execSQL(SQL_TABLE_NOTES);
 
     }
 
@@ -58,7 +69,16 @@ public class SqliteHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(" DROP TABLE IF EXISTS " + TABLE_USERS);
     }
 
+    public void addNote(Note note) {
 
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_DESCRIPTION, note.description);
+        values.put(KEY_MODIFIEDDATE, note.date);
+        db.insert(TABLE_NOTES, null, values);
+    }
     public void addUser(User user) {
 
         SQLiteDatabase db = this.getWritableDatabase();
