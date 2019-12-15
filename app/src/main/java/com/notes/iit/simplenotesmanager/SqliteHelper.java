@@ -43,9 +43,9 @@ public class SqliteHelper extends SQLiteOpenHelper {
             + KEY_EMAIL + " TEXT, "
             + KEY_PASSWORD + " TEXT"
             + " ) ";
-    private static final String TABLE_NOTES ="note" ;
-    private static final String KEY_DESCRIPTION ="description" ;
-    private static final String KEY_MODIFIEDDATE ="date" ;
+    public static final String TABLE_NOTES ="note" ;
+    public static final String KEY_DESCRIPTION ="description" ;
+    public static final String KEY_MODIFIEDDATE ="date" ;
     public static final String SQL_TABLE_NOTES = " CREATE TABLE " + TABLE_NOTES
             + " ( "
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -78,6 +78,13 @@ public class SqliteHelper extends SQLiteOpenHelper {
         values.put(KEY_DESCRIPTION, note.description);
         values.put(KEY_MODIFIEDDATE, note.date);
         db.insert(TABLE_NOTES, null, values);
+    }
+
+    public Cursor retriveAllNotesCursor() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur =  db.rawQuery( "select rowid as _id,"+KEY_DESCRIPTION+","+KEY_MODIFIEDDATE+" from "+ TABLE_NOTES, null);
+        return cur;
     }
     public void addUser(User user) {
 
