@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     //Declaration SqliteHelper
     SqliteHelper sqliteHelper;
 
+    static int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +48,14 @@ public class LoginActivity extends AppCompatActivity {
                     String email = editTextEmail.getText().toString();
                     String password = editTextPassword.getText().toString();
 
-                    User currentUser = authenticate(new User(email,password));
+                    User currentUser = authenticate(new User(email, password));
 
                     if (currentUser != null) {
                         Snackbar.make(buttonLogin, "Successfully Logged in!", Snackbar.LENGTH_LONG).show();
-                        Intent intent=new Intent(LoginActivity.this,NotesListActivity.class);
+
+                        userId = currentUser.id;
+
+                        Intent intent = new Intent(LoginActivity.this, NotesListActivity.class);
                         startActivity(intent);
                     } else {
                         Snackbar.make(buttonLogin, "Failed to log in , please try again", Snackbar.LENGTH_LONG).show();
@@ -60,13 +66,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
     public User authenticate(User user) {
-        User dbUser=sqliteHelper.retreiveUserByEmail(user.email);
-        if(dbUser!=null&&dbUser.password.equals(user.password)){
+        User dbUser = sqliteHelper.retreiveUserByEmail(user.email);
+        if (dbUser != null && dbUser.password.equals(user.password)) {
+            user.id = dbUser.id;
             return user;
         }
         return null;
     }
+
     private void initCreateAccountTextView() {
         TextView textViewCreateAccount = (TextView) findViewById(R.id.textViewCreateAccount);
         textViewCreateAccount.setText(fromHtml("<font color='#ffffff'>I don't have account yet. </font><font color='#0c0099'>create one</font>"));

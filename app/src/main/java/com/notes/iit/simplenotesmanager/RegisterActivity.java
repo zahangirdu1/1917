@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     if (!sqliteHelper.isEmailExists(email)) {
 
-                        sqliteHelper.addUser(new User(email,password));
+                        sqliteHelper.addUser(new User(email, password));
                         Snackbar.make(buttonRegister, "User created successfully! Please Login ", Snackbar.LENGTH_LONG).show();
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 finish();
                             }
                         }, Snackbar.LENGTH_LONG);
-                    }else {
+                    } else {
 
                         Snackbar.make(buttonRegister, "User already exists with same email ", Snackbar.LENGTH_LONG).show();
                     }
@@ -96,8 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
             valid = false;
             textInputLayoutPassword.setError("Please enter valid password!");
         } else {
-                valid = true;
-                textInputLayoutPassword.setError(null);
+            valid = true;
+            textInputLayoutPassword.setError(null);
         }
 
         return valid;

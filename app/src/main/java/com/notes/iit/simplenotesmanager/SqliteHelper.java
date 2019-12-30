@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 
@@ -43,9 +44,9 @@ public class SqliteHelper extends SQLiteOpenHelper {
             + KEY_EMAIL + " TEXT, "
             + KEY_PASSWORD + " TEXT"
             + " ) ";
-    public static final String TABLE_NOTES ="note" ;
-    public static final String KEY_DESCRIPTION ="description" ;
-    public static final String KEY_MODIFIEDDATE ="date" ;
+    public static final String TABLE_NOTES = "note";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_MODIFIEDDATE = "date";
     public static final String SQL_TABLE_NOTES = " CREATE TABLE " + TABLE_NOTES
             + " ( "
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -83,9 +84,10 @@ public class SqliteHelper extends SQLiteOpenHelper {
     public Cursor retriveAllNotesCursor() {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur =  db.rawQuery( "select rowid as _id,"+KEY_DESCRIPTION+","+KEY_MODIFIEDDATE+" from "+ TABLE_NOTES, null);
+        Cursor cur = db.rawQuery("select rowid as _id," + KEY_DESCRIPTION + "," + KEY_MODIFIEDDATE + " from " + TABLE_NOTES, null);
         return cur;
     }
+
     public void addUser(User user) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -99,14 +101,16 @@ public class SqliteHelper extends SQLiteOpenHelper {
         long todo_id = db.insert(TABLE_USERS, null, values);
     }
 
-    public User retreiveUserByEmail(String email){
-        SQLiteDatabase database=this.getReadableDatabase();
-        Cursor cursor=database.query(TABLE_USERS,null,KEY_EMAIL+"=?",new String[]{email},null,null,null);
-        if(cursor!=null&&cursor.getCount()>0){
+    public User retreiveUserByEmail(String email) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.query(TABLE_USERS, null, KEY_EMAIL + "=?", new String[]{email}, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
-            String mail=cursor.getString(cursor.getColumnIndex(KEY_EMAIL));
-            String password=cursor.getString(cursor.getColumnIndex(KEY_PASSWORD));
-            User retreivedUser=new User(mail,password);
+            String id = cursor.getString(cursor.getColumnIndex(KEY_ID));
+            String mail = cursor.getString(cursor.getColumnIndex(KEY_EMAIL));
+            String password = cursor.getString(cursor.getColumnIndex(KEY_PASSWORD));
+            User retreivedUser = new User(mail, password);
+            retreivedUser.id = Integer.valueOf(id);
             return retreivedUser;
         }
         return null;
@@ -121,9 +125,37 @@ public class SqliteHelper extends SQLiteOpenHelper {
                 new String[]{email},
                 null, null, null);
 
-        if (cursor != null && cursor.moveToFirst()&& cursor.getCount()>0) {
+        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
             return true;
         }
         return false;
+    }
+
+    public boolean updateUser(User user) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_EMAIL, user.email);
+
+        values.put(KEY_PASSWORD, user.password);
+
+        long todo_id = db.update(TABLE_USERS, values, "id=?", new String[]{Integer.toString(user.id)});
+
+        return todo_id > 0;
+    }
+
+    public User retreiveUserById(String id) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.query(TABLE_USERS, null, KEY_ID + "=?", new String[]{id}, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            String mail = cursor.getString(cursor.getColumnIndex(KEY_EMAIL));
+            String password = cursor.getString(cursor.getColumnIndex(KEY_PASSWORD));
+            User retreivedUser = new User(mail, password);
+            return retreivedUser;
+        }
+        return null;
     }
 }

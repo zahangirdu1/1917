@@ -2,6 +2,7 @@ package com.notes.iit.simplenotesmanager;
 
 
 public class User {
+    public int id;
     public String email;
     public String password;
 
